@@ -13,6 +13,7 @@
     "app-root-path": "^3.0.0",
     "fs-extra": "^9.1.0",
     "resemblejs": "^3.2.5",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "yargs": "^16.2.0"
   }
 }
