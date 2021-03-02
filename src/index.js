@@ -24,4 +24,6 @@ const compareManager = new CompareManager(photos)
 //   console.log(compareManager.toRemove)
 // }
 
+console.log(yargsOptions.root)
+
 // start()

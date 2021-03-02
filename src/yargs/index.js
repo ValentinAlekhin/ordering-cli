@@ -1,5 +1,7 @@
 const yargs = require('yargs')
 
+const pathValidator = require('../validators/pathValidator')
+
 module.exports = yargs
   .scriptName('ordering-cli')
   .usage('Usage: $0 [args]')
@@ -12,4 +14,5 @@ module.exports = yargs
   .describe('r', 'Указать рабочую директорию')
   .alias('h', 'help')
   .alias('v', 'version')
+  .check(argv => pathValidator(argv.root))
   .help('h').argv

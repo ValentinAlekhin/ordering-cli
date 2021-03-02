@@ -20,7 +20,9 @@
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "chalk": "^4.1.0",
     "fs-extra": "^9.1.0",
+    "is-valid-path": "^0.1.1",
     "resemblejs": "^3.2.5",
     "shortid": "^2.2.16",
     "yargs": "^16.2.0"
