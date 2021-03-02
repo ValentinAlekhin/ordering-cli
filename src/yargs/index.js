@@ -6,13 +6,12 @@ module.exports = yargs
   .scriptName('ordering-cli')
   .usage('Usage: $0 [args]')
   .option('root', {
-    alias: 'root',
+    alias: 'r',
     describe: 'Указать рабочую директорию',
     type: 'string',
+    default: process.cwd(),
   })
-  .alias('r', 'root')
-  .describe('r', 'Указать рабочую директорию')
-  .alias('h', 'help')
-  .alias('v', 'version')
   .check(({ root }) => (root ? pathValidator(root) : true))
-  .help('h').argv
+  .alias('v', 'version')
+  .help('h')
+  .alias('h', 'help').argv
