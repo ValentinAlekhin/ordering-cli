@@ -1,13 +1,22 @@
 {
   "name": "ordering-cli",
   "version": "1.0.0",
-  "description": "",
-  "main": "CompareInOneDir.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Программа удаляет копии фото в дочерних диретороиях и сортирует в них файлы в папки по их типу",
+  "main": "./src/index.js",
+  "bin": {
+    "ordering-cli": "./src/index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ordering",
+    "cli",
+    "compare"
+  ],
+  "author": "Valentin Alekhin <alekhin.v99gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ValentinAlekhin/ordering-cli"
+  },
+  "homepage": "https://github.com/ValentinAlekhin/ordering-cli",
   "license": "ISC",
   "dependencies": {
     "app-root-path": "^3.0.0",
