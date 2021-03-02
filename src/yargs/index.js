@@ -14,5 +14,5 @@ module.exports = yargs
   .describe('r', 'Указать рабочую директорию')
   .alias('h', 'help')
   .alias('v', 'version')
-  .check(argv => pathValidator(argv.root))
+  .check(({ root }) => (root ? pathValidator(root) : true))
   .help('h').argv
