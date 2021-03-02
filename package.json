@@ -1,0 +1,18 @@
+{
+  "name": "ordering-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "CompareInOneDir.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^3.0.0",
+    "fs-extra": "^9.1.0",
+    "resemblejs": "^3.2.5",
+    "shortid": "^2.2.16"
+  }
+}
