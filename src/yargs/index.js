@@ -1,5 +1,7 @@
 const yargs = require('yargs')
 
+const appRootPath = require('app-root-path').path
+
 const pathValidator = require('../validators/pathValidator')
 
 module.exports = yargs
@@ -9,9 +11,16 @@ module.exports = yargs
     alias: 'r',
     describe: 'Указать рабочую директорию',
     type: 'string',
-    default: process.cwd(),
+    default: process.cwd() === appRootPath ? null : process.cwd(),
   })
-  .check(({ root }) => (root ? pathValidator(root) : true))
+  .check(({ root }) =>
+    root ? pathValidator(root, { validateAppPath: true }) : true
+  )
+  .option('remove-copy', {
+    describe: 'Удалить одинаковые фото',
+    type: 'boolean',
+    default: false,
+  })
   .alias('v', 'version')
   .help('h')
   .alias('h', 'help').argv
