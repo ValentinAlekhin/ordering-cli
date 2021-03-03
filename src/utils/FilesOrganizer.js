@@ -1,12 +1,19 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const ShortID = require('./ShortId')
+const FileType = require('file-type')
 
 const def = {
   files: {
-    image: { dirName: 'image', exts: ['jpg', 'png', 'jpeg', 'webp', 'raw'] },
-    video: { dirName: 'video', exts: ['mp4', 'avi'] },
+    image: {
+      dirName: 'image',
+    },
+    video: {
+      dirName: 'video',
+    },
+    audio: {
+      dirName: 'audio',
+    },
     other: { dirName: 'other' },
   },
   database: {
@@ -15,9 +22,8 @@ const def = {
   },
 }
 
-class FilesOrganizer extends ShortID {
+class FilesOrganizer {
   constructor(directory, options = def) {
-    super()
     this.directory = directory
     this.options = {
       files: {
@@ -32,8 +38,10 @@ class FilesOrganizer extends ShortID {
     this.createDirectories()
   }
 
-  start() {
-    return this.recursiveSearch(this.directory)
+  async start() {
+    await this.recursiveSearch(this.directory)
+
+    return this.options.files
   }
 
   createFilesPath() {
@@ -57,41 +65,37 @@ class FilesOrganizer extends ShortID {
     }
   }
 
-  getInfoByExt(ext) {
-    ext = ext.replace('.', '').toLowerCase()
-    const entries = Object.entries(this.options.files)
-    for (const [fileType, { exts }] of entries) {
-      if (!exts) continue
-
-      for (const currExt of exts) {
-        if (ext === currExt) {
-          return this.options.files[fileType]
-        }
-      }
-    }
-
-    return this.options.files.other
-  }
-
-  isFileOnRightDirectory(file) {
-    const { dir, ext } = path.parse(file)
-    const { path: rightDir } = this.getInfoByExt(ext)
-
-    const res = dir === rightDir
-
-    return dir === rightDir
-  }
-
   async fileHandler(file) {
-    const res = this.isFileOnRightDirectory(file)
-    if (this.isFileOnRightDirectory(file)) return
     try {
-      const { ext: fileExt } = path.parse(file)
-      const fileName = `${this.createId()}.${fileExt}`
+      const { ext: oldExt, base, name, dir } = path.parse(file)
 
-      const { path: newPath } = this.getInfoByExt(fileExt)
+      const { mime, ext } = await FileType.fromFile(file)
+      const fileType = mime.split('/')[0]
 
-      await fs.copyFile(file, path.join(newPath, fileName))
+      const baseName = `${name}.${ext}`
+      let targetDir
+
+      if (this.options.files.hasOwnProperty(fileType)) {
+        targetDir = this.options.files[fileType].path
+      } else {
+        targetDir = this.options.files.other.path
+      }
+
+      if (dir === targetDir) {
+        if (oldExt.toLocaleLowerCase() === ext.toLocaleLowerCase()) return
+        await fs.rename(file, path.join(targetDir, baseName))
+        return
+      }
+
+      let newPath = path.join(targetDir, base)
+
+      if (fs.existsSync(newPath)) {
+        newPath = path.join(targetDir, `${name}.copy${ext}`)
+      } else {
+        newPath = path.join(targetDir, baseName)
+      }
+
+      await fs.copyFile(file, newPath)
       await fs.remove(file)
     } catch (e) {
       throw new Error(e)
