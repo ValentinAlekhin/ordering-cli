@@ -1,5 +1,7 @@
 const ShortID = require('./ShortId')
 
+//FIXME: Почему то не работает класс и не завершается процесс
+
 class CompareManager extends ShortID {
   constructor(photos) {
     super()

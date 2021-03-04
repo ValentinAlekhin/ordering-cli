@@ -1,5 +1,7 @@
 const fs = require('fs-extra')
 
+//TODO: Добавить тесты
+
 const appRootPath = require('app-root-path').path
 const isValid = require('is-valid-path')
 const chalk = require('chalk')
