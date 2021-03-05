@@ -5,11 +5,10 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const FileType = require('file-type')
-const { realpathSync } = require('fs')
 
 class FilesOrganizer {
   constructor(directory) {
-    this.directory = path.normalize(directory)
+    this.directory = directory
     this.files = {}
     this.currentFile = {}
   }
@@ -64,7 +63,8 @@ class FilesOrganizer {
 
   async setCurrentFile(file) {
     try {
-      const { ext: currentExt, base, name, dir } = path.parse(file)
+      const { ext, base, name, dir } = path.parse(file)
+      const currentExt = ext.split('.')[1]
       const { mime, ext: rightExt } = await FileType.fromFile(file)
       const type = mime.split('/')[0]
 
@@ -84,7 +84,6 @@ class FilesOrganizer {
 
   async fileHandler(file) {
     try {
-      await this.setCurrentFile()
       this.createFileName()
 
       if (this.isFileOnRightDir()) {
@@ -108,13 +107,16 @@ class FilesOrganizer {
   async recursiveSearch(directory) {
     try {
       const filesAndDirs = await fs.readdir(directory)
+
       for (const current of filesAndDirs) {
         const pathToCurrent = path.join(directory, current)
         const stat = await fs.lstat(pathToCurrent)
 
+        console.log(pathToCurrent)
+
         if (stat.isDirectory()) {
           await this.recursiveSearch(pathToCurrent)
-        } else await this.fileHandler(pathToCurrent)
+        } else await this.setCurrentFile(pathToCurrent)
       }
     } catch (e) {
       throw new Error(e)

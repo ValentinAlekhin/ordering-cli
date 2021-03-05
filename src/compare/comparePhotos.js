@@ -1,15 +1,15 @@
 const { compare } = require('resemblejs')
 
 module.exports = ({ first, second }) =>
-  new Promise((res, rej) => {
+  new Promise((response, reject) => {
     const options = {
       returnEarlyThreshold: 5,
     }
     compare(first, second, options, (err, data) => {
       if (err) {
-        rej(err)
+        reject(err)
       } else {
-        res(parseInt(data.misMatchPercentage) < 5)
+        response({ first, second, isSame: data.isSameDimensions })
       }
     })
   })

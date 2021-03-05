@@ -1,78 +1,62 @@
-const cluster = require('cluster')
-const numCPUs = require('os').cpus().length
+const Cluster = require('cluster')
 
-let activeWorkers = 0
+if (Cluster.isMaster) {
+  const numCPUs = require('os').cpus()
 
-const addWorker = () => {
-  activeWorkers++
-  console.log(activeWorkers)
-}
-const removeWorker = () => {
-  activeWorkers--
-  console.log(activeWorkers)
-}
+  const createWork = require('../compare/createWork')
+  const compareMiddleware = require('../compare/compareMiddleware')
 
-module.exports = (workCreator, closeWork, workFunction) =>
-  new Promise(res => {
-    if (cluster.isMaster) {
-      const createWork = worker => {
-        const work = workCreator()
-        console.log('🚀 ~ file: master.js ~ line 9 ~ work', work)
+  let activeWorkers = 0
 
-        switch (work.message) {
-          case 'OK':
-            worker.send({
-              action: 'work',
-              work,
-              id: work.id,
-              func: workFunction,
-            })
-            break
-          case 'end':
-            worker.send({ action: 'close' })
-            removeWorker()
-            res()
-            break
-          case 'busy':
-            worker.send({ action: 'close' })
-            removeWorker()
-            break
-          default:
-            break
+  const addWorker = () => {
+    activeWorkers++
+    console.log(activeWorkers)
+  }
+  const removeWorker = () => {
+    activeWorkers--
+    console.log(activeWorkers)
+  }
+
+  module.exports = photos =>
+    new Promise(response => {
+      let data = createWork(photos)
+
+      const sendMsgToWorker = worker => {
+        if (!data.photos.length) {
+          worker.send({ action: 'close' })
+          response(data.toRemove)
         }
+
+        worker.send({ action: 'work', work: data.photos[0] })
       }
 
-      for (let i = 0; i < numCPUs - 1; i++) {
-        const worker = cluster.fork()
-        createWork(worker)
+      const createWorker = () => {
+        worker = Cluster.fork()
+        sendMsgToWorker(worker)
         addWorker()
       }
 
+      numCPUs.forEach(_ => createWorker())
+
       cluster.on('exit', (_, code) => {
         if (code === 1) {
-          const worker = cluster.fork()
-          createWork(worker)
-          addWorker()
+          createWorker()
         }
       })
 
       cluster.on('message', (worker, msg) => {
         const { status } = msg
-        switch (status) {
-          case 'success':
-            const { result, id } = msg
-            closeWork(id, result)
-            createWork(worker)
-            break
-          case 'error':
-            const { error } = msg
-            console.log(error)
-            break
-          default:
-            break
+        if (status === 'error') {
+          console.log(msg.error)
+          worker.send({ action: 'close' })
+          return
         }
+
+        data = compareMiddleware(msg.result)
+
+        sendMsgToWorker(worker)
       })
-    } else {
-      require('./worker')
-    }
-  })
+    })
+} else {
+  require('./worker')
+}

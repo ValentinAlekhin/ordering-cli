@@ -1,51 +1,60 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
+const { isMaster } = require('cluster')
 
-const chalk = require('chalk')
-const appRootPath = require('app-root-path').toString()
+if (isMaster) {
+  const fs = require('fs-extra')
+  const path = require('path')
 
-// CLI Arguments
-const yargsOptions = require('./yargs/index')
+  const chalk = require('chalk')
+  const appRootPath = require('app-root-path').toString()
 
-// Finding and organizing files
-const FilesOrganizer = require('./utils/FilesOrganizer')
+  // CLI Arguments
+  // const yargsOptions = require('./yargs/index')
 
-// Multi-threaded function
-const clusterMaster = require('./cluster/master')
+  // Finding and organizing files
+  const FilesOrganizer = require('./utils/FilesOrganizer')
 
-// Compare utils
-const CompareManager = require('./utils/CompareManager')
-const workFunction = path.join(appRootPath, 'src', 'utils', 'comparePhotos.js')
+  // Multi-threaded function
+  // const clusterMaster = require('./cluster/master')
 
-async function start() {
-  const { root, 'remove-copy': removeCopy } = yargsOptions
+  // // Compare utils
+  // const CompareManager = require('./utils/CompareManager')
+  // const workFunction = path.join(
+  //   appRootPath,
+  //   'src',
+  //   'utils',
+  //   'comparePhotos.js'
+  // )
 
-  if (!root) {
-    console.log(
-      chalk.red.bold(
-        'Комманда не может быть выполненна в директории приложения'
-      )
-    )
+  async function start() {
+    // const { root, 'remove-copy': removeCopy } = yargsOptions
 
-    return
+    // if (!root) {
+    //   console.log(
+    //     chalk.red.bold(
+    //       'Комманда не может быть выполненна в директории приложения'
+    //     )
+    //   )
+
+    //   return
+    // }
+
+    const filesOrganizer = new FilesOrganizer(path.join(appRootPath, 'data'))
+    const {
+      image: { path: imagesPath },
+    } = await filesOrganizer.start()
+
+    // if (removeCopy) {
+    //   const images = await fs.readdir(imagesPath)
+    //   const compareManager = new CompareManager(images)
+    //   await clusterMaster(
+    //     compareManager.createWork.bind(compareManager),
+    //     compareManager.closeWork.bind(compareManager),
+    //     workFunction
+    //   )
+    // }
   }
 
-  const filesOrganizer = new FilesOrganizer(path.join(appRootPath, 'data'))
-  const {
-    image: { path: imagesPath },
-  } = await filesOrganizer.start()
-
-  if (removeCopy) {
-    const images = await fs.readdir(imagesPath)
-    const compareManager = new CompareManager(images)
-    await clusterMaster(
-      compareManager.createWork.bind(compareManager),
-      compareManager.closeWork.bind(compareManager),
-      workFunction
-    )
-  }
+  start()
 }
-
-start()

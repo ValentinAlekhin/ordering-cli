@@ -1,12 +1,14 @@
+const comparePhotos = require('../compare/comparePhotos')
+
 process.on('message', msg => {
   const { action } = msg
 
   switch (action) {
     case 'work':
-      const { work, id, func } = msg
+      const { work } = msg
 
-      require(func)(work)
-        .then(result => process.send({ status: 'success', result, id }))
+      comparePhotos(work)
+        .then(result => process.send({ status: 'success', result }))
         .catch(error => process.send({ status: 'error', error }))
       break
     case 'close':
