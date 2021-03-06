@@ -1,10 +1,10 @@
 {
   "name": "ordering-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Программа удаляет копии фото в дочерних директориях и сортирует в них файлы в папки по их типу",
   "main": "./src/index.js",
   "bin": {
-    "ordering-cli": "./src/index.js"
+    "ordering-cli": "src/index.js"
   },
   "scripts": {
     "test": "jest"
