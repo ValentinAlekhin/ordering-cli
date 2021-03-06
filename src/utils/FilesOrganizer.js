@@ -1,6 +1,3 @@
-//TODO: Добавить удаление старых директорий
-//TODO: Добавить создание только необходимых директорий
-
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -29,11 +26,28 @@ class FilesOrganizer {
 
         if (stat.isDirectory()) {
           await this.recursiveSearch(pathToCurrent)
+          this.removeDirectory(pathToCurrent)
         } else await this.fileHandler(pathToCurrent)
       }
     } catch (e) {
       throw new Error(e)
     }
+  }
+
+  removeDirectory(directory) {
+    if (this.isUsedDirectory(directory)) return
+
+    fs.removeSync(directory)
+  }
+
+  isUsedDirectory(directory) {
+    let isUsedDirectory = false
+
+    Object.values(this.files).forEach(fileType => {
+      if (fileType.path === directory) isUsedDirectory = true
+    })
+
+    return isUsedDirectory
   }
 
   async fileHandler(file) {
