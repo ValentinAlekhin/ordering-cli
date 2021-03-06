@@ -1,12 +1,20 @@
+const path = require('path')
+
+const appRootPath = require('app-root-path').toString()
+
 const pathValidator = require('./path')
 
-const options = {
-  validateString: false,
-  validateExists: false,
-  validateAppPath: false,
-}
-
 describe('Test path validator:', () => {
+  let options
+
+  beforeEach(() => {
+    options = {
+      validateString: false,
+      validateExists: false,
+      validateAppPath: false,
+    }
+  })
+
   it('should return error of string', () => {
     try {
       pathValidator('asdfx *g/sd_f ds', { ...options, validateString: true })
@@ -18,7 +26,6 @@ describe('Test path validator:', () => {
     try {
       pathValidator('asdfx/dsf', { ...options, validateExists: true })
     } catch (e) {
-      console.log(e)
       expect(e).toBeInstanceOf(Error)
     }
   })
@@ -28,5 +35,17 @@ describe('Test path validator:', () => {
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
     }
+  })
+
+  it('should pass validation', () => {
+    options = {
+      validateString: true,
+      validateExists: true,
+      validateAppPath: true,
+    }
+
+    const { dir } = path.parse(appRootPath)
+
+    expect(pathValidator(dir, options)).toBeTruthy()
   })
 })
