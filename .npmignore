@@ -118,4 +118,5 @@ dist
 data
 vscode
 tests
+test
 *.test.*
