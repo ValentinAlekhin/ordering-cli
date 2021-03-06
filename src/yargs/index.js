@@ -13,18 +13,18 @@ module.exports = yargs
     alias: 'r',
     describe: 'Указать рабочую директорию',
     type: 'string',
-    default: process.cwd().includes(appRootPath()) ? null : process.cwd(),
+    default: process.cwd().includes(appRootPath) ? null : process.cwd(),
   })
   .check(({ root }) =>
     root ? pathValidator(root, { validateAppPath: true }) : true
   )
 
   //Remove same option
-  .option('remove-same', {
-    describe: 'Удалить одинаковые фото',
-    type: 'boolean',
-    default: false,
-  })
+  // .option('remove-same', {
+  //   describe: 'Удалить одинаковые фото',
+  //   type: 'boolean',
+  //   default: false,
+  // })
 
   //Other options
   .alias('v', 'version')
