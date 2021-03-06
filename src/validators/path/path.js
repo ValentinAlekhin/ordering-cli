@@ -29,7 +29,7 @@ const pathValidator = (directory, options = def) => {
     )
   }
 
-  if (validateExists && fs.existsSync(normalizedPath)) {
+  if (validateExists && !fs.existsSync(normalizedPath)) {
     throw createError('Указанной директории не существует')
   }
 
