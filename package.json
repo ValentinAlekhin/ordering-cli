@@ -1,10 +1,13 @@
 {
   "name": "ordering-cli",
   "version": "1.0.0",
-  "description": "Программа удаляет копии фото в дочерних диретороиях и сортирует в них файлы в папки по их типу",
+  "description": "Программа удаляет копии фото в дочерних директориях и сортирует в них файлы в папки по их типу",
   "main": "./src/index.js",
   "bin": {
     "ordering-cli": "./src/index.js"
+  },
+  "scripts": {
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [
     "ordering",
@@ -27,5 +30,8 @@
     "resemblejs": "^3.2.5",
     "shortid": "^2.2.16",
     "yargs": "^16.2.0"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
   }
 }
