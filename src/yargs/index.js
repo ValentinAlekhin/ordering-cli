@@ -2,7 +2,7 @@ const yargs = require('yargs')
 
 const appRootPath = require('app-root-path').path
 
-const pathValidator = require('../validators/pathValidator')
+const pathValidator = require('../validators/path/path')
 
 module.exports = yargs
   .scriptName('ordering-cli')
