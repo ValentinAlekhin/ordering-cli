@@ -1,5 +1,3 @@
-const appRootPath = require('app-root-path').path
-
 const pathValidator = require('./path')
 
 const options = {
@@ -18,7 +16,7 @@ describe('Test path validator:', () => {
   })
   it('should return error of exists', () => {
     try {
-      pathValidator('asdfx *g/sd_f ds', { ...options, validateExists: true })
+      pathValidator('asdfx/dsf', { ...options, validateExists: true })
     } catch (e) {
       console.log(e)
       expect(e).toBeInstanceOf(Error)
@@ -26,7 +24,7 @@ describe('Test path validator:', () => {
   })
   it('should return error of app root path', () => {
     try {
-      pathValidator(appRootPath, { ...options, validateAppPath: true })
+      pathValidator(process.cwd(), { ...options, validateAppPath: true })
     } catch (e) {
       expect(e).toBeInstanceOf(Error)
     }
